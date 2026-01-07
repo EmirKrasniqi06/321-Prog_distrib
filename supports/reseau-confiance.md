@@ -29,15 +29,15 @@ tout en permettant la **propagation de la confiance** :
 ce qui implique une **validation mutuelle** avant de partager des informations.
 
 ### Validité
-Chaque nœud doit agir pour le bien commun du réseau. Ceci implique différentes stratégies comme 
-l’analyse du traffic pour un `contrôleur` pour éviter, par exemple, qu’une maison modifie sa trésorerie de manière
-illicite...
 
+Même si l’identité d’un nœud est vérifiée cryptographiquement, le réseau doit également s’assurer que les actions de ce nœud respectent les règles communes.  
+Cela nécessite des mécanismes de contrôle, de traçabilité et éventuellement de consensus distribué, afin de détecter ou prévenir les comportements frauduleux.
 
 #### Importance du logging
-On peut aussi imaginer analyser les logs quotidiens pour détecter des opérations illicites... Ceci mène naturellement
-à l’utilisation de mécanismes en lien avec la blockchain, ce qui d’ailleurs résout aussi un problème lié à la 
-[confiance initiale](#défis-et-solutions-de-la-version-pki)
+
+On peut par exemple imaginer analyser les logs quotidiens pour détecter des opérations illicites...  
+On centralise la fonctionnalité de logging dans un microservice. Avec des messages chiffrés de manière asymétrique, on assure la non-répudiation des logs. 
+Un outil d'analyse peut ensuite être mis en place pour vérifier les opérations effectuées.
 
 ## Exemple d'application avec PKI (Public Key Infrastructure)
 
@@ -81,7 +81,9 @@ sequenceDiagram
     Broker-->>B: Transmet le message signé
     B->>CA: Demande le certificat de A via CA
     Note over CA: Vérifie l’identité de B
-    CA->>B: Envoie la clé public de A
+    CA->>B: Envoie le certificat de A
+    B->>B: Vérifie la signature du certificat avec la clé publique de la CA
+    B->>B: Extrait la clé publique de A du certificat
     B->>B: Vérifie la signature avec la clé publique de A
     B->>B: Valide le contenu du message
 
